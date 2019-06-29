@@ -253,7 +253,7 @@ repeat:
 				goto itoa;
 			case 'x': /* hex */
 				base = 16;
-				goto itoa;
+				goto utoa;
 			case 'o': /* oct */
 				base = 8;
 itoa:
@@ -280,15 +280,31 @@ itoa:
 					internal_putchar(' ');
 				internal_itoa(d, base);
 				break;
+utoa:
 			case 'u': /* unsigned */
-				if (longer == 0 || shorter > 0)
-					u = va_arg(ap, unsigned int);
-				else if (longer == 1 || sizet == 1)
-					u = va_arg(ap, unsigned long int);
-				else if (longer == 2)
-					u = va_arg(ap, unsigned long long int);
-				internal_utoa(u, 10);
-				break;
+			        if (longer == 0 || shorter > 0)
+			                u = va_arg(ap, unsigned int);
+			        else if (longer == 1 || sizet == 1)
+			                u = va_arg(ap, unsigned long int);
+			        else if (longer == 2)
+			                u = va_arg(ap, unsigned long long int);
+			        if (hash && d != 0 && base != 10) {
+			                switch (base) {
+			                case 8:
+			                        internal_putchar('0');
+			                        break;
+			                case 16:
+			                        internal_putchar('0');
+			                        internal_putchar('x');
+			                        break;
+			                }
+			        }
+			        if (plussign && u > 0)
+			                internal_putchar('+');
+			        if (space && u > 0)
+			                internal_putchar(' ');
+			        internal_utoa(u, base);
+			        break;
 			case 'h':
 				++shorter;
 				if (longer > 0 || shorter > 2 || sizet > 0) {
