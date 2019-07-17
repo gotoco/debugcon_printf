@@ -89,6 +89,8 @@ internal_putchar(int c)
 #endif
 }
 
+static char * const _nullptr = "(null)";
+
 static long
 internal_strlen(char *s)
 {
@@ -101,12 +103,17 @@ internal_strlen(char *s)
 }
 
 static void
-internal_itoa(long long int i, int base)
+internal_itoa(long long int i, int base, int uppercase)
 {
 	char buf[64]; /* The longest number string length */
-	const char *digit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const char *digit;
 	long long int temp;
 	char *bp;
+
+	if (uppercase)
+		digit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	else
+		digit = "0123456789abcdefghijklmnoprstuvwxyz";
 
 	bp = &buf[sizeof buf];
 	*(--bp) = '\0';
@@ -123,12 +130,17 @@ internal_itoa(long long int i, int base)
 }
 
 static void
-internal_utoa(unsigned long long int u, int base)
+internal_utoa(unsigned long long int u, int base, int uppercase)
 {
 	char buf[64]; /* The longest number string length */
-	const char *digit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const char *digit;
 	unsigned long long int temp;
 	char *bp;
+
+	if (uppercase)
+		digit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	else
+		digit = "0123456789abcdefghijklmnoprstuvwxyz";
 
 	bp = &buf[sizeof buf];
 	*(--bp) = '\0';
@@ -229,6 +241,8 @@ repeat:
 				break;
 			case 's': /* string */
 				s = va_arg(ap, char *);
+				if (s == NULL)
+					s = _nullptr;
 				slen = internal_strlen(s);
 				if (len > 0 && slen > len)
 					slen = len;
@@ -278,7 +292,7 @@ itoa:
 					internal_putchar('+');
 				if (space && d > 0)
 					internal_putchar(' ');
-				internal_itoa(d, base);
+				internal_itoa(d, base, 0);
 				break;
 utoa:
 			case 'u': /* unsigned */
@@ -303,7 +317,7 @@ utoa:
 			                internal_putchar('+');
 			        if (space && u > 0)
 			                internal_putchar(' ');
-			        internal_utoa(u, base);
+			        internal_utoa(u, base, 0);
 			        break;
 			case 'h':
 				++shorter;

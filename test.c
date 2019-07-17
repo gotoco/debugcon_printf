@@ -48,9 +48,8 @@ __KERNEL_RCSID(0, "$NetBSD$");
 static int
 test(void)
 #else
-int
-main(int argc, char **argv)
-#endif
+
+void basic_tests(void)
 {
 	char c;
 	short s;
@@ -136,6 +135,42 @@ main(int argc, char **argv)
 	debugcon_printf("'%llu'\n", ull);
 
 	return 0;
+
+}
+
+void sanity_tests(void)
+{
+	char *ptr = "Hello world!";
+	char *np = 0;
+	int i = 5;
+	unsigned int bs = sizeof(int)*8;
+	int mi;
+	char buf[80];
+
+	mi = (1 << (bs-1)) + 1;
+
+	debugcon_printf("hex %02x = 00\n", 0);
+
+	debugcon_printf("%s\n", ptr);
+	debugcon_printf("printf test\n");
+	debugcon_printf("%s is null pointer\n", np);
+	debugcon_printf("%d = 5\n", i);
+	debugcon_printf("%d = - max int\n", mi);
+	debugcon_printf("char %c = 'a'\n", 'a');
+	debugcon_printf("hex %x = ff\n", 0xff);
+	debugcon_printf("hex %02x = 00\n", 0);
+	debugcon_printf("signed %d = unsigned %u = hex %x\n", -3, -3, -3);
+	debugcon_printf("%d %s(s)%", 0, "message");
+	debugcon_printf("\n");
+	debugcon_printf("%d %s(s) with %%\n", 0, "message");
+}
+
+int
+main(int argc, char **argv)
+#endif
+{
+	basic_tests();
+	sanity_tests();
 }
 
 #ifdef _KERNEL
