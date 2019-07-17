@@ -1,0 +1,8 @@
+debugcon_printf.pc:
+prefix=/usr/local
+includedir=${prefix}/include/debugcon_printf
+
+Name: debugcon_printf
+Description: Bochs/Qemu debugcon printf() loadable kernel module for NetBSD
+Version: 0.1.0
+Cflags: -I${includedir}/debugcon_printf
